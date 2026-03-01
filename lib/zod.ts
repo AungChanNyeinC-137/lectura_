@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { MAX_FILE_SIZE } from './constants'
 
 // generic file validator – ensures value is a File instance
 const fileInstance = z
@@ -9,7 +10,7 @@ export const UploadSchema = z.object({
     .refine((f) => f.type === 'application/pdf', {
       message: 'Must be a PDF document',
     })
-    .refine((f) => f.size <= 50 * 1024 * 1024, {
+    .refine((f) => f.size <=MAX_FILE_SIZE, {
       message: 'File must be smaller than 50 MB',
     }),
   coverImage: fileInstance
