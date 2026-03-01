@@ -1,24 +1,22 @@
 import { z } from 'zod'
-import { MAX_FILE_SIZE } from './constants'
+import { ACCEPTED_IMAGE_TYPES, ACCEPTED_PDF_TYPES, MAX_FILE_SIZE, MAX_IMAGE_SIZE } from './constants'
 
 // generic file validator – ensures value is a File instance
 const fileInstance = z
   .custom<File>((v) => v instanceof File, { message: 'Invalid file' })
 
 export const UploadSchema = z.object({
-  pdfFile: fileInstance
-    .refine((f) => f.type === 'application/pdf', {
-      message: 'Must be a PDF document',
-    })
-    .refine((f) => f.size <=MAX_FILE_SIZE, {
-      message: 'File must be smaller than 50 MB',
-    }),
-  coverImage: fileInstance
-    .optional()
-    .refine((f) => !f || f.type.startsWith('image/'), {
-      message: 'Cover must be an image',
-    }),
-  title: z.string().min(1, 'Title is required'),
-  author: z.string().min(1, 'Author is required'),
-  voice: z.enum(['dave', 'daniel', 'chris', 'rachel', 'sarah']),
+  title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
+  author: z.string().min(1, 'Author is required').max(100, 'Author name is too long'),
+  persona: z.string().min(1, 'Please select a voice'),
+  pdfFile: z.instanceof(File, { message: "PDF file is required" })
+    .refine((file) => file.size <= MAX_FILE_SIZE, "File size must be less than 50MB")
+    .refine((file) => ACCEPTED_PDF_TYPES.includes(file.type), "Only PDF files are accepted"),
+
+  coverImage: z.instanceof(File, { message: "Cover image is required" })
+    .refine((file) => file.size <= MAX_IMAGE_SIZE, "Image size must be less than 10MB")
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported"
+    ),
 })
