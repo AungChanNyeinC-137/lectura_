@@ -6,6 +6,27 @@ import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/bookSegment.model";
 import { success } from "zod";
 
+export const getAllBooks = async () => {
+    try {
+        await connectToDatabase();
+        const books = await Book.find().sort({ createdAt: -1 });
+        const formattedBooks = books.map((book) => ({
+            ...book.toObject(),
+            _id: book._id.toString(),
+        }))
+        console.log('Books', formattedBooks);
+        return {
+            exists: true,
+            data: serializeData(formattedBooks),
+        }
+    } catch (error) {
+        console.error('Error getting books', error);
+        return {
+            success: false,
+            error: error,
+        }
+    }
+}
 export const checkBookExists = async (title: string) => {
     try {
         await connectToDatabase();

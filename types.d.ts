@@ -139,3 +139,10 @@ export interface EndSessionResult {
     success: boolean;
     error?: string;
 }
+export interface  Book  {
+  _id: string
+  title: string
+  author: string
+  coverURL: string
+  slug: string
+}
