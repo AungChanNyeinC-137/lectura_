@@ -15,6 +15,7 @@ let cached = global.mongooseCache || (global.mongooseCache = { conn: null, promi
 export const connectToDatabase = async () => {
     if (cached.conn) return cached.conn;
     if (!cached.promise) {
+        console.log("ACTUAL URI:", process.env.MONGODB_URI);
         cached.promise = mongoose.connect(MONGODB_URI, {
             bufferCommands: false
         });

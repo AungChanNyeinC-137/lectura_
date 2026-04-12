@@ -18,5 +18,5 @@ export const UploadSchema = z.object({
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
       "Only .jpg, .jpeg, .png and .webp formats are supported"
-    ),
+    ).optional(),
 })
