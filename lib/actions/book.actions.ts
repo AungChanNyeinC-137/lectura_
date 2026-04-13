@@ -14,7 +14,6 @@ export const getAllBooks = async () => {
             ...book.toObject(),
             _id: book._id.toString(),
         }))
-        console.log('Books', formattedBooks);
         return {
             exists: true,
             data: serializeData(formattedBooks),

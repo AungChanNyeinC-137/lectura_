@@ -5,8 +5,8 @@ import { error } from "console";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
-    const body = (await request.json()) as HandleUploadBody;
     try {
+        const body = (await request.json()) as HandleUploadBody;
         const jsonResponse = await handleUpload({
             token: process.env.lectura_READ_WRITE_TOKEN,
             body,
@@ -24,19 +24,21 @@ export async function POST(request: Request): Promise<NextResponse> {
                 }
 
             },
-            onUploadCompleted: async ({blob,tokenPayload})=> {
-                console.log('file uploaded to blob:', blob.url) 
-                const payload = tokenPayload? JSON.parse(tokenPayload): null;
+            onUploadCompleted: async ({ blob, tokenPayload }) => {
+                console.log('file uploaded to blob:', blob.url)
+                const payload = tokenPayload ? JSON.parse(tokenPayload) : null;
                 const userId = payload?.userId;
                 //todo: PostHog
-                
+
             }
-           
+
         })
-         return NextResponse.json(jsonResponse);
+        return NextResponse.json(jsonResponse);
     } catch (e) {
         const message = e instanceof Error ? e.message : "An unknown error occured";
         const status = message.includes('Unauthorized') ? 401 : 500;
-        return NextResponse.json({ error: message }, { status });
+        console.error('Upload error', e)
+        const clientMessage = status == 401 ? 'Unauthorized' : 'Upload Failed'
+        return NextResponse.json({ error: clientMessage }, { status });
     }
 }
